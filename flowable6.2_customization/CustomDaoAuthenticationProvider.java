@@ -72,6 +72,13 @@ public class CustomDaoAuthenticationProvider extends DaoAuthenticationProvider {
         }
     	// super.additionalAuthenticationChecks(userDetails, authentication);
     	//Pru customized this method for Authenticated by calling AD authentication service
+    	//Check the api.authentication.ldap.enabled properties in config file
+    	String ldapAuthentication = environment.getProperty("api.authentication.ldap.enabled", String.class);
+    	LOGGER.debug("[Pru]api.authentication.ldap.enabled="+ldapAuthentication);
+    	if(!ldapAuthentication.equals("true")){
+    		super.additionalAuthenticationChecks(userDetails, authentication);
+    		return ;
+    	}
     	LOGGER.debug("[Pru]additionalAuthenticationChecks ...,");
     	String username = (authentication.getPrincipal() == null) ? "NONE_PROVIDED"
 				: authentication.getName();
@@ -115,38 +122,6 @@ public class CustomDaoAuthenticationProvider extends DaoAuthenticationProvider {
     
     @Autowired
     protected Environment environment;
-    
-    
-    /*
-    @Override
-    public Authentication authenticate(Authentication authentication) 
-      throws AuthenticationException {
-  
-        String name = authentication.getName();
-        String password = authentication.getCredentials().toString();
-        String username  =name ;
-        UserDetails user =retrieveUser(username,
-				(UsernamePasswordAuthenticationToken) authentication);
-        Object principalToReturn = user;
-        principalToReturn = user.getUsername();
-		
-        // use the credentials and authenticate against the third-party system
-        
-        LOGGER.info("CustomDaoAuthenticationProvider.authenticate {},{}",name,password);
-        if(("user".equals(name) && "user".equals(password)) 
-        		|| ("admin1".equals(name) && "admin".equals(password))){
-        	LOGGER.info("Succesful authentication!");
-        	//return new UsernamePasswordAuthenticationToken(name, password);	
-        	return createSuccessAuthentication(principalToReturn, authentication, user);
-        
-        }
-        
-        LOGGER.info("Login fail!");
-        
-        return null;
-
-        }
-      */
     
     public  static String sendPOSTHTTPData(String urlpath, JSONObject json) throws BadCredentialsException {
         HttpURLConnection connection = null;
