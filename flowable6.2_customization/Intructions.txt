@@ -1,0 +1,3 @@
+--Setup IDM FLowable workflow :
+----Create flowable user
+----Run Oracle SQL script to create metadata tables for IDM
